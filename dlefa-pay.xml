@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>درگاه پرداخت دیتالایف</name>
+	<description>پلاگین پرداخت آنلاین همیار دیتالایف انجین فارسی (درگاه ملت و نکست پی )</description>
+	<icon>engine/skins/images/dlefa_pay.png</icon>
+	<version>1.0</version>
+	<dleversion>13.0</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl>https://github.com/nextpay-ir/datalifeengine-v13.1-donate-easypayment-nextpay/blob/master/nextpay-pay.xml</upgradeurl>
+	<filedelete>1</filedelete>
+	<mysqlinstall><![CDATA[CREATE TABLE {prefix}_pay_invoices ( 
+	`id` INT(11) NOT NULL AUTO_INCREMENT , 
+	`userid` MEDIUMINT(8) NOT NULL DEFAULT '0' ,
+        `name` VARCHAR(100) NOT NULL,
+	`date` VARCHAR(15) NOT NULL ,
+	`mobile` VARCHAR(12) NOT NULL,
+	`status` INT(4) NOT NULL ,
+	`statusmsg` VARCHAR(200) NOT NULL ,
+	`refid` VARCHAR(200) NOT NULL , 
+	`bank` VARCHAR(200) NOT NULL , 
+	`amount` VARCHAR(50) NOT NULL , 
+  	`message` varchar(255) NOT NULL,
+	PRIMARY KEY (`id`)
+	) ENGINE = InnoDB CHARACTER SET {charset} COLLATE utf8mb4_general_ci;
+
+	INSERT INTO {prefix}_admin_sections (`id`, `name`, `title`, `descr`, `icon`, `allow_groups`) VALUES (NULL, 'pay', 'پرداخت آنلاین همیار دیتالایف', 'مدیریت پرداخت آنلاین همیار دیتالایف', 'engine/skins/images/dlefa_pay.png', '1');]]>
+	</mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[DELETE FROM {prefix}_admin_sections WHERE name = 'pay';DROP TABLE {prefix}_pay_invoices;]]></mysqldelete>
+	<file name="engine/engine.php">
+		<operation action="before">
+			<searchcode><![CDATA[	case "search" :
+		
+		if ($_REQUEST['mode'] == "advanced") $_REQUEST['full_search'] = 1;
+		include (DLEPlugins::Check(ENGINE_DIR . '/modules/search.php'));
+		break;]]></searchcode>
+			<replacecode><![CDATA[	case "pay" :
+		include ENGINE_DIR .'/modules/pay/main.php';
+		break;]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[elseif ($do == 'xfsearch') $nam_e = $xf;]]></searchcode>
+			<replacecode><![CDATA[elseif ($do == 'pay') $nam_e = $module_title;]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
